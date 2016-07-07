@@ -9,6 +9,7 @@ Example
 -------------
 
 ::
+
     $ pyopen test/data/SampleCSVFile_11kb.csv --no-header
 
     f1 test/data/SampleCSVFile_11kb.csv 11.0 kB pandas_csv
@@ -57,7 +58,7 @@ The variable 'f1' is a pandas DataFrame with the contents of the csv file:
     2  293    46.71    8.69   2.99  Nunavut  Binders and Binder Accessories  0.39
     3  483  1198.97  195.99   3.99  Nunavut    Telephones and Communication  0.58
     4  515    30.94   21.78   5.94  Nunavut                      Appliances  0.50
-    
+
 Additional files specified on the commandline will be in variables 'f2', 'f3', and so on.
 
 Installation
