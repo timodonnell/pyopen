@@ -1,10 +1,11 @@
 '''
-pyopen commandline tool
+Launch an ipython session with the specified files parsed and available as
+variables 'f1', 'f2', etc.
+
 '''
 
 import sys
 import argparse
-import re
 import collections
 import os
 
@@ -21,55 +22,21 @@ from . import load
 parser = argparse.ArgumentParser(description=__doc__)
 
 parser.add_argument("files", nargs="*", metavar="FILENAME",
-    help="Path to files to open")
+    help="Path to files to open. They will be named f1, f2, etc.")
 
-parser.add_argument("--name", action="append")
-parser.add_argument("--loader", action="append")
+parser.add_argument("--loader", action="append",
+    help="Loader to use. Specify one argument per file. Available loaders: %s"
+    % ','.join(sorted(loaders.LOADERS)))
 parser.add_argument("--quiet", "-q", action="store_true")
-parser.add_argument("--code", action="append")
-
+parser.add_argument("--code", action="append",
+    help="Instead of launching ipython, just run the given python code.")
 
 for loader in loaders.LOADERS.values():
     group = parser.add_argument_group(title=loader.name)
     loader.add_arguments(group)
 
-def make_name(filename):
-    filename = filename.replace("/", "_")
-
-    # Remove invalid characters
-    filename = re.sub('[^0-9a-zA-Z_]', '', filename)
-
-    # Remove leading characters until we find a letter or underscore
-    filename = re.sub('^[^a-zA-Z_]+', '', filename)
-
-    return filename.strip("_")
-
-def uniqueify_names(names):
-    name_counts = collections.Counter(names)
-    new_names = names
-
-    if len(name_counts) != len(names):
-        # Make them unique by adding a number to duplicates.
-        new_names = []
-        for name in names:
-            if name_counts[name] == 1:
-                new_name = name
-            else:
-                new_name = ("%s_%d" % (
-                    name,
-                    1 + len([x for x in new_names if x == name])))
-            new_names.append(new_name)
-    return new_names
-
 def run(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
-
-    names = uniqueify_names(
-        args.name if args.name else [make_name(f) for f in args.files])
-
-    if len(names) != len(args.files):
-        raise ValueError("Number files (%d) != number of names (%d)" % (
-            len(args.files), len(names)))
 
     loaders_to_use = [
         load.get_loader(
@@ -83,19 +50,17 @@ def run(argv=sys.argv[1:]):
             "Number files (%d) != number of loaders specified (%d)" % (
                 len(args.files), len(loaders_to_use)))
 
-    loaded = {}
     loaded_filenames = {}
     loaded_absolute_filenames = {}
     loaded_list = []
     all_summary_lines = []
     num_abbreviations = collections.OrderedDict()
-    for (i, (filename, name, loader)) in (
-            enumerate(zip(args.files, names, loaders_to_use))):
+    for (i, (filename, loader)) in (
+            enumerate(zip(args.files, loaders_to_use))):
 
         loaded_file = loader.load(args, filename)
         num_abbreviation = "f%d" % (i + 1)
 
-        loaded[name] = loaded_file
         loaded_filenames[filename] = loaded_file
         loaded_absolute_filenames[os.path.abspath(filename)] = loaded_file
         loaded_list.append(loaded_file)
@@ -128,9 +93,6 @@ def run(argv=sys.argv[1:]):
         print("\t%s : the parsed file%s" % (
             ", ".join(num_abbreviations),
             "" if len(num_abbreviations) == 1 else "s"))
-        print(
-            "\tloaded : object with attributes for each parsed file "
-            "(abbreviated filenames, tab completes)")
         print("\tloaded_filenames : dict from filename to parsed file")
         print(
             "\tloaded_absolute_filenames : dict from absolute filename to "
@@ -141,7 +103,6 @@ def run(argv=sys.argv[1:]):
             "To quit type 'quit()'.")
 
     variables = {
-        'loaded': argparse.Namespace(**loaded),
         'loaded_filenames': loaded_filenames,
         'loaded_absolute_filenames': loaded_absolute_filenames,
         'loaded_list': loaded_list,
@@ -162,4 +123,3 @@ def run(argv=sys.argv[1:]):
         config.TerminalIPythonApp.display_banner = not args.quiet
 
         IPython.start_ipython(argv=[], config=config, user_ns=variables)
-
