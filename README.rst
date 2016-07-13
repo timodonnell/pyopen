@@ -5,6 +5,18 @@ pyopen is a command-line tool for quickly inspecting files using python. It drop
 
 Currently supports csv/tsv files (uses pandas and also supports gzip / bz2 compression), excel, json, and pickle files. We welcome contributions of loaders for other file types.
 
+Installation
+-------------
+::
+
+    pip install pyopen
+
+To run the tests:
+
+::
+
+    nosetests
+
 Example
 -------------
 
