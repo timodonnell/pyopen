@@ -7,6 +7,7 @@ Currently supports csv/tsv files (uses pandas and also supports gzip / bz2 compr
 
 Installation
 -------------
+
 ::
 
     pip install pyopen
@@ -21,6 +22,7 @@ Example
 -------------
 
 ::
+
     $ pyopen test/data/data1.csv
 
     f1 test/data/data1.csv 4.9 kB pandas_csv
