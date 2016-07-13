@@ -125,7 +125,9 @@ def run(argv=sys.argv[1:]):
             print(line)
 
         print("Variables defined:")
-        print("\t%s : parsed files" % (", ".join(num_abbreviations)))
+        print("\t%s : the parsed file%s" % (
+            ", ".join(num_abbreviations),
+            "" if len(num_abbreviations) == 1 else "s"))
         print(
             "\tloaded : object with attributes for each parsed file "
             "(abbreviated filenames, tab completes)")
