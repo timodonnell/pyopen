@@ -9,24 +9,27 @@ def test_csv():
     eq_(
         run_and_capture(
             "print(f1.shape)",
-            [data_path("SampleCSVFile_11kb.csv")]),
+            [data_path("SampleCSVFile_11kb.csv"),
+            "--csv-encoding", "latin1"]),
         "(99, 10)")
     eq_(
         run_and_capture(
             "print(f1.shape)",
-            [data_path("SampleCSVFile_11kb.csv.gz")]),
+            [data_path("SampleCSVFile_11kb.csv.gz"),
+            "--csv-encoding", "latin1"]),
         "(99, 10)")
     eq_(
         run_and_capture(
             "print(f1.shape)",
-            [data_path("SampleCSVFile_11kb.csv.bz2")]),
+            [data_path("SampleCSVFile_11kb.csv.bz2"),
+            "--csv-encoding", "latin1"]),
         "(99, 10)")
     eq_(
         run_and_capture(
             "print(f1.shape)",
             [
                 data_path("SampleCSVFile_11kb.csv.nonstandard_extension"),
-                "--loader", "pandas_csv",
+                "--loader", "pandas_csv", "--csv-encoding", "latin1",
             ]),
         "(99, 10)")
 
@@ -35,7 +38,7 @@ if RUN_TESTS_REQUIRING_INTERNET:
         eq_(
             run_and_capture(
                 "print(f1.shape)",
-                [SAMPLE_CSV_URL]),
+                [SAMPLE_CSV_URL, "--csv-encoding", "latin1"]),
             "(99, 10)")
 
 

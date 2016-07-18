@@ -3,7 +3,7 @@ import tempfile
 
 TEMPORARY_FILES = []
 
-def tempfile_path(prefix='', suffix='', contents=''):
+def tempfile_path(prefix='', suffix=''):
     '''
     Return a path to a new temporary file. The caller is responsible for
     deleting the file when finished.
@@ -12,7 +12,6 @@ def tempfile_path(prefix='', suffix='', contents=''):
             prefix=prefix,
             suffix=suffix,
             delete=False)
-    fd.write(contents)
     fd.close()
     TEMPORARY_FILES.append(fd.name)
     return fd.name
