@@ -63,4 +63,20 @@ The variable 'f1' is a pandas DataFrame with the contents of the csv file:
     3     PT1  GRCh37   chr1         17664605       17664606   C   G   verified
     4     PT1  GRCh37   chr1         26670492       26670493   G   T   verified
 
+You can also pass URLs to pyopen:
+
+::
+
+    $ pyopen https://github.com/timodonnell/pyopen/raw/master/test/data/nasa_19950801.tsv.bz2
+    ...
+    In [1]: f1.mean()
+
+    Out[1]:
+    time         8.072857e+08
+    response     2.107552e+02
+    bytes        1.556397e+04
+    referer               NaN
+    useragent             NaN
+    dtype: float64
+    Out[1]: (30969, 9) 
 

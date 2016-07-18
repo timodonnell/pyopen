@@ -1,6 +1,10 @@
 from nose.tools import eq_
 from . import data_path, run_and_capture
 
+RUN_TESTS_REQUIRING_INTERNET = True
+
+SAMPLE_CSV_URL = "https://raw.githubusercontent.com/timodonnell/pyopen/master/test/data/SampleCSVFile_11kb.csv"
+
 def test_csv():
     eq_(
         run_and_capture(
@@ -25,6 +29,15 @@ def test_csv():
                 "--loader", "pandas_csv",
             ]),
         "(99, 10)")
+
+if RUN_TESTS_REQUIRING_INTERNET:
+    def test_csv_url():
+        eq_(
+            run_and_capture(
+                "print(f1.shape)",
+                [SAMPLE_CSV_URL]),
+            "(99, 10)")
+
 
 def test_tsv():
     eq_(

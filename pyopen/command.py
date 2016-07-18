@@ -3,6 +3,7 @@ Launch an ipython session with the specified files parsed and available as
 variables 'f1', 'f2', etc.
 
 '''
+from __future__ import absolute_import
 
 import sys
 import argparse
@@ -16,8 +17,7 @@ from traitlets.config import Config
 
 import humanize
 
-import loaders
-from . import load
+from . import load, loaders, web, temp_files
 
 parser = argparse.ArgumentParser(description=__doc__)
 
@@ -30,6 +30,8 @@ parser.add_argument("--loader", action="append",
 parser.add_argument("--quiet", "-q", action="store_true")
 parser.add_argument("--code", action="append",
     help="Instead of launching ipython, just run the given python code.")
+parser.add_argument("--keep-temp-files", action="store_true", default=False,
+    help="Don't delete temporary files.")
 
 for loader in loaders.LOADERS.values():
     group = parser.add_argument_group(title=loader.name)
@@ -37,7 +39,12 @@ for loader in loaders.LOADERS.values():
 
 def run(argv=sys.argv[1:]):
     args = parser.parse_args(argv)
+    try:
+        go(args)
+    finally:
+        temp_files.finished(not args.keep_temp_files, args.quiet)
 
+def go(args):
     loaders_to_use = [
         load.get_loader(
             args.files[i],
@@ -55,14 +62,16 @@ def run(argv=sys.argv[1:]):
     loaded_list = []
     all_summary_lines = []
     num_abbreviations = collections.OrderedDict()
-    for (i, (filename, loader)) in (
+    for (i, (filename_or_url, loader)) in (
             enumerate(zip(args.files, loaders_to_use))):
 
-        loaded_file = loader.load(args, filename)
+        local_file = web.maybe_download(filename_or_url)
+
+        loaded_file = loader.load(args, local_file)
         num_abbreviation = "f%d" % (i + 1)
 
-        loaded_filenames[filename] = loaded_file
-        loaded_absolute_filenames[os.path.abspath(filename)] = loaded_file
+        loaded_filenames[filename_or_url] = loaded_file
+        loaded_absolute_filenames[os.path.abspath(local_file)] = loaded_file
         loaded_list.append(loaded_file)
         num_abbreviations[num_abbreviation] = loaded_file
 
@@ -70,8 +79,8 @@ def run(argv=sys.argv[1:]):
 
         summary_lines.append("%s %s %s %s" % (
             num_abbreviation,
-            filename,
-            humanize.naturalsize(os.stat(filename).st_size),
+            filename_or_url,
+            humanize.naturalsize(os.stat(local_file).st_size),
             loader.name))
         summary_lines.append(
             "\t" + "\n\t".join(loader.summarize(loaded_file).split("\n")))
