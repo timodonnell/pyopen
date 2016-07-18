@@ -32,7 +32,7 @@ def download(url):
         prefix="pyopen_",
         suffix=url.split("/")[-1])
 
-    with open(temp_file, "w") as fd:
+    with open(temp_file, "wb") as fd:
         response = requests.get(url, stream=True)
         response.raise_for_status()
         for block in response.iter_content(1048576):

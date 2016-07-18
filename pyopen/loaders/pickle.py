@@ -14,7 +14,7 @@ class Pickle(BaseLoader):
 
     @staticmethod
     def load(args, filename):
-        with open(filename) as fd:
+        with open(filename, "rb") as fd:
             return load(fd)
 
     @staticmethod
