@@ -3,7 +3,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-version = "0.0.5"
+version = "0.0.6"
 
 setup(
     name="pyopen",
@@ -35,6 +35,7 @@ setup(
         "six",
         "xlrd",
         "requests",
+        "tables",
         "pandas>=0.16.1",
         "nose>=1.3.1",
     ]
