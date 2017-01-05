@@ -59,6 +59,13 @@ def test_xls():
             [data_path("SampleXLSFile_38kb.xls")]),
         "(99, 10)")
 
+def test_hdf5():
+    eq_(
+        run_and_capture(
+            "print(f1['/detector/readout'].ix[3, 'energy'])",
+            [data_path("pytables_native.h5")]),
+        "6561.0")
+
 def test_json():
     eq_(
         run_and_capture(

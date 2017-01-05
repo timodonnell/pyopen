@@ -2,12 +2,13 @@ from __future__ import absolute_import
 
 import collections
 
-from . import pandas_csv, pandas_xls, json, pickle, text
+from . import pandas_csv, pandas_hdf5, pandas_xls, json, pickle, text
 
 LOADERS = collections.OrderedDict((loader.name, loader) for loader in
     [
         pandas_csv.PandasCSV,
         pandas_xls.PandasXLS,
+        pandas_hdf5.PandasHDF5,
         json.JSON,
         pickle.Pickle,
         text.Text,
@@ -16,6 +17,7 @@ LOADERS = collections.OrderedDict((loader.name, loader) for loader in
 __all__ = [
     "pandas_csv",
     "pandas_xls",
+    "pandas_hdf5",
     "json",
     "pickle",
     "text",
