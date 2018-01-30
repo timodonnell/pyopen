@@ -73,6 +73,13 @@ def test_json():
             [data_path("example1.json")]),
         "example glossary")
 
+def test_yaml():
+    eq_(
+        run_and_capture(
+            "print(f1['glossary']['title'])",
+            [data_path("example1.yaml")]),
+        "example glossary")
+
 def test_pickle():
     eq_(
         run_and_capture(
